@@ -5,12 +5,17 @@ set -o pipefail
 
 usage() {
     echo
-    echo "Usage: deploy.sh <terraform-dir> <terraform-workspace>"
+    echo "Usage: deploy.sh <terraform-dir> <terraform-workspace> <ansible-dir>"
     echo
     echo "terraform-dir       - The path to the directory containing the project's Terraform configuration."
     echo "terraform-workspace - The name of the Terraform workspace to use."
+    echo "ansible-dir         - The path to the directory containing the project's Ansible configuration."
     echo
 }
+
+###################
+# Parse Arguments #
+###################
 
 if [ -z ${1+x} ]
 then
@@ -35,6 +40,21 @@ fi
 export TF_WORKSPACE=$1
 shift
 
+if [ -z ${1+x} ]
+then
+    echo "No Ansible directory specified."
+    usage
+
+    exit 1
+fi
+
+ANSIBLE_DIR=$1
+shift
+
+##################################
+# Pull Parameters from Terraform #
+##################################
+
 # Obtain deployment parameters from Terraform state.
 echo "Initializing Terraform..."
 (cd ${TF_DIR}; terraform init >/dev/null)
@@ -49,3 +69,29 @@ echo
 echo "Deployment Parameters:"
 echo "    Server IP: ${SERVER_IP}"
 echo
+
+##############################
+# Generate Ansible Inventory #
+##############################
+
+# Generate a temporary directory to store files in
+tmpdir=$(mktemp -d "${TMPDIR:-/tmp/}$(basename $0).XXXXXXXXXXXX")
+inventory_file="${tmpdir}/inventory"
+
+cat > ${inventory_file} <<EOF
+[webservers]
+${SERVER_IP}
+EOF
+
+echo "Generated inventory file:"
+echo
+cat ${inventory_file}
+echo
+
+(
+    cd $ANSIBLE_DIR
+
+    ansible-playbook \
+        --inventory ${inventory_file} \
+        deploy.yml
+)

@@ -1,0 +1,18 @@
+---
+- hosts: all
+  gather_facts: false
+  remote_user: ubuntu
+
+  pre_tasks:
+    - name: Install python for Ansible
+      become: true
+      raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+      register: output
+      changed_when: output.stdout != ""
+    - name: Update apt cache
+      become: true
+      apt:
+        update_cache: true
+
+  roles:
+    - django

@@ -1,0 +1,51 @@
+---
+- name: Install git
+  become: true
+  apt:
+    name: git
+
+- name: Install python
+  become: true
+  apt:
+    name: "{{ django_python_version }}"
+
+- name: Install pip
+  become: true
+  apt:
+    name: "{{ django_pip_package }}"
+
+- name: Install pipenv
+  become: true
+  pip:
+    executable: "{{ django_pip_command }}"
+    name: pipenv
+
+- name: Create directory to hold project
+  become: true
+  file:
+    path: "{{ django_project_root | dirname }}"
+    state: directory
+
+- name: Update project source code
+  become: true
+  git:
+    depth: 1
+    dest: "{{ django_project_root }}"
+    repo: "{{ django_repo }}"
+    update: true
+    version: "{{ django_repo_version }}"
+
+- name: Install dependencies
+  command: pipenv install --deploy
+  args:
+    chdir: "{{ django_project_root }}"
+
+- name: Get location of virtual environment
+  command: pipenv --venv
+  args:
+    chdir: "{{ django_project_root }}"
+  register: venv_location
+
+- name: Save virtualenv location
+  set_fact:
+    django_venv: "{{ venv_location.stdout }}"

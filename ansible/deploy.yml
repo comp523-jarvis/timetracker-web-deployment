@@ -15,4 +15,5 @@
         update_cache: true
 
   roles:
+    - postgres
     - django

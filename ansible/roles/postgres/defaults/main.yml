@@ -1,0 +1,4 @@
+---
+postgres_db_name: appdb
+
+postgres_db_user: dbuser

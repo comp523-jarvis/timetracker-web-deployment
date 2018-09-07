@@ -106,3 +106,15 @@ resource "aws_security_group_rule" "outgoing_https" {
   to_port           = 443
   type              = "egress"
 }
+
+######################
+# Generate Passwords #
+######################
+
+resource "random_string" "db_password" {
+  length = 50
+
+  keepers {
+    instance_id = "${aws_instance.server.id}"
+  }
+}

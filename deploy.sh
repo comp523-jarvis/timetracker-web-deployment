@@ -55,18 +55,28 @@ shift
 # Pull Parameters from Terraform #
 ##################################
 
-# Obtain deployment parameters from Terraform state.
+# Initialize Terraform
 echo "Initializing Terraform..."
 (cd ${TF_DIR}; terraform init >/dev/null)
 echo "Done."
 echo
 
+# Build infrastructure
+echo "Provisioning Infrastructure..."
+echo
+(cd ${TF_DIR}; terraform apply -auto-approve)
+echo
+echo "Done."
+echo
+
 echo "Obtaining Terraform outputs..."
+DB_PASSWORD=$(cd ${TF_DIR}; terraform output db_password)
 SERVER_IP=$(cd ${TF_DIR}; terraform output server_ip)
 echo "Done."
 echo
 
 echo "Deployment Parameters:"
+echo "    Database Password: ****"
 echo "    Server IP: ${SERVER_IP}"
 echo
 
@@ -88,10 +98,15 @@ echo
 cat ${inventory_file}
 echo
 
+#####################################
+# Configure Webservers with Ansible #
+#####################################
+
 (
     cd $ANSIBLE_DIR
 
     ansible-playbook \
         --inventory ${inventory_file} \
+        --extra-vars "db_password='${DB_PASSWORD}'" \
         deploy.yml
 )

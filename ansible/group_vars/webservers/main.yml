@@ -1,7 +1,7 @@
 ---
-django_repo: https://github.com/UltiManager/ultimanager-api
+python_app_repo: https://github.com/UltiManager/ultimanager-api
 
-django_app_name: ultimanager-api
-django_app_package: api
+python_app_app_name: ultimanager-api
+python_app_app_package: api
 
 postgres_db_password: "{{ db_password }}"

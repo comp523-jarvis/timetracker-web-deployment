@@ -16,4 +16,4 @@
 
   roles:
     - postgres
-    - django
+    - python-app

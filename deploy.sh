@@ -77,7 +77,8 @@ echo "Done."
 echo
 
 echo "Deployment Parameters:"
-echo "    Database Password: ****"
+echo "    Database Password: <sensitive>"
+echo "    Secret Key: <sensitive>"
 echo "    Server IP: ${SERVER_IP}"
 echo
 

@@ -12,3 +12,7 @@ django_app_root: "{{ python_app_project_root }}/{{ python_app_package }}"
 django_env:
   DJANGO_DEBUG: "true"
   DJANGO_SECRET_KEY: "{{ django_secret_key }}"
+
+gunicorn_venv: "{{ python_app_venv }}"
+gunicorn_working_dir: "{{ django_app_root }}"
+gunicorn_wsgi_app: "{{ python_app_package }}.wsgi:application"

@@ -1,0 +1,22 @@
+---
+- name: reload daemons
+  become: true
+  systemd:
+    daemon_reload: yes
+    # We must specify a name even though we're simply reloading
+    name: gunicorn.service
+    enabled: yes
+
+- name: stop gunicorn service
+  become: true
+  service:
+    name: gunicorn.service
+    state: stopped
+  listen: reload gunicorn
+
+- name: restart gunicorn socket
+  become: true
+  service:
+    name: gunicorn.socket
+    state: restarted
+  listen: reload gunicorn

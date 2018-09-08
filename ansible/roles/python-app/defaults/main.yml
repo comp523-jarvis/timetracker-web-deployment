@@ -7,7 +7,5 @@ python_app_python_version: python3
 python_app_pip_package: python3-pip
 python_app_pip_command: pip3
 
-python_app_app_name: app
-python_app_project_root: /opt/{{ python_app_app_name }}
-
-python_app_manage_path: "{{ python_app_project_root }}/{{ python_app_app_package }}/manage.py"
+python_app_name: app
+python_app_project_root: /opt/{{ python_app_name }}

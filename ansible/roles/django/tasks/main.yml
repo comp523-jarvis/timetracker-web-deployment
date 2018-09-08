@@ -1,0 +1,30 @@
+---
+- name: Create Django media root
+  become: true
+  file:
+    mode: 0777
+    path: "{{ django_media_root }}"
+    state: directory
+
+- name: Create Django static root
+  become: true
+  file:
+    mode: 0777
+    path: "{{ django_static_root }}"
+    state: directory
+
+- name: Run migrations
+  become: true
+  environment: "{{ django_base_env | combine(django_env) }}"
+  django_manage:
+    app_path: "{{ django_app_root }}"
+    command: migrate
+    virtualenv: "{{ django_venv }}"
+
+- name: Collect staticfiles
+  become: true
+  environment: "{{ django_base_env | combine(django_env) }}"
+  django_manage:
+    app_path: "{{ django_app_root }}"
+    command: collectstatic
+    virtualenv: "{{ django_venv }}"

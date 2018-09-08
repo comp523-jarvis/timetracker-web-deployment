@@ -112,6 +112,14 @@ resource "aws_security_group_rule" "outgoing_https" {
 ######################
 
 resource "random_string" "db_password" {
+  length = 32
+
+  keepers {
+    instance_id = "${aws_instance.server.id}"
+  }
+}
+
+resource "random_string" "django_secret_key" {
   length = 50
 
   keepers {

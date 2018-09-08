@@ -71,6 +71,7 @@ echo
 
 echo "Obtaining Terraform outputs..."
 DB_PASSWORD=$(cd ${TF_DIR}; terraform output db_password)
+SECRET_KEY=$(cd ${TF_DIR}; terraform output secret_key)
 SERVER_IP=$(cd ${TF_DIR}; terraform output server_ip)
 echo "Done."
 echo
@@ -108,5 +109,6 @@ echo
     ansible-playbook \
         --inventory ${inventory_file} \
         --extra-vars "db_password='${DB_PASSWORD}'" \
+        --extra-vars "django_secret_key='${SECRET_KEY}'" \
         deploy.yml
 )

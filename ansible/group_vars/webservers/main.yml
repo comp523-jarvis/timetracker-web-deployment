@@ -1,7 +1,14 @@
 ---
 python_app_repo: https://github.com/UltiManager/ultimanager-api
 
-python_app_app_name: ultimanager-api
-python_app_app_package: api
+python_app_name: ultimanager-api
+python_app_package: api
 
 postgres_db_password: "{{ db_password }}"
+
+django_venv: "{{ python_app_venv }}"
+django_app_root: "{{ python_app_project_root }}/{{ python_app_package }}"
+
+django_env:
+  DJANGO_DEBUG: "true"
+  DJANGO_SECRET_KEY: "{{ django_secret_key }}"

@@ -1,0 +1,8 @@
+django_media_root: /var/www/media
+django_static_root: /var/www/static
+
+django_base_env:
+  DJANGO_MEDIA_ROOT: "{{ django_media_root }}"
+  DJANGO_STATIC_ROOT: "{{ django_static_root }}"
+
+django_env: {}

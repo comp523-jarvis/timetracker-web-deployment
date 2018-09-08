@@ -1,0 +1,27 @@
+---
+- name: Install NGINX
+  become: true
+  apt:
+    name: nginx
+
+- name: Disable default NGINX site
+  become: true
+  file:
+    path: "{{ nginx_sites_enabled_dir }}/default"
+    state: absent
+  notify: reload nginx
+
+- name: Upload NGINX configuration
+  become: true
+  template:
+    dest: "{{ nginx_sites_available_dir }}/{{ nginx_conf_name }}"
+    src: server.conf.j2
+  notify: reload nginx
+
+- name: Enable NGINX site
+  become: true
+  file:
+    dest: "{{ nginx_sites_enabled_dir }}/{{ nginx_conf_name }}"
+    state: link
+    src: "{{ nginx_sites_available_dir }}/{{ nginx_conf_name }}"
+  notify: reload nginx

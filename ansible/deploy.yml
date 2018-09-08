@@ -19,3 +19,4 @@
     - python-app
     - django
     - gunicorn
+    - nginx

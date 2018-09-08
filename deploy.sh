@@ -105,7 +105,7 @@ echo
 #####################################
 
 (
-    cd $ANSIBLE_DIR
+    cd ${ANSIBLE_DIR}
 
     ansible-playbook \
         --inventory ${inventory_file} \

@@ -6,10 +6,13 @@ After=network.target
 [Service]
 PIDFile=/run/gunicorn/pid
 User=root
+{% set env_dict = django_base_env | combine(django_env) %}
+{% for key in env_dict %}Environment="{{ key }}={{ env_dict[key] }}"
+{% endfor %}
 RuntimeDirectory=gunicorn
 WorkingDirectory={{ gunicorn_working_dir }}
 ExecStart={{ gunicorn_venv }}/bin/gunicorn --pid /run/gunicorn/pid   \
---bind {{ gunicorn_socket_uri }} applicationname.wsgi
+--bind {{ gunicorn_socket_uri }} {{ gunicorn_wsgi_app }}
 ExecReload=/bin/kill -s HUP $MAINPID
 ExecStop=/bin/kill -s TERM $MAINPID
 PrivateTmp=true

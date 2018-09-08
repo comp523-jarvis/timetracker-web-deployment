@@ -1,0 +1,17 @@
+server {
+    listen 80;
+    server_name {{ inventory_hostname }};
+
+    location /media/ {
+        alias {{ django_media_root }}/;
+    }
+
+    location /static/ {
+        alias {{ django_static_root }}/;
+    }
+
+    location / {
+        include proxy_params;
+        proxy_pass http://{{ nginx_proxy_socket }};
+    }
+}

@@ -1,4 +1,6 @@
 ---
+nginx_server_name: "{{ inventory_hostname }}"
+
 nginx_conf_name: site.conf
 
 nginx_sites_available_dir: /etc/nginx/sites-available

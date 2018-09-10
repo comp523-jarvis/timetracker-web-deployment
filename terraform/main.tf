@@ -13,7 +13,8 @@ provider "aws" {
 }
 
 locals {
-  env_name = "${terraform.workspace}"
+  env_name  = "${terraform.workspace}"
+  subdomain = "${terraform.workspace == "production" ? "api" : "${terraform.workspace}.api"}"
 }
 
 data "aws_ami" "server" {
@@ -30,6 +31,10 @@ data "aws_ami" "server" {
   }
 
   owners = ["${var.ami_publisher}"]
+}
+
+data "aws_route53_zone" "main" {
+  name = "${var.domain_name}"
 }
 
 resource "aws_instance" "server" {
@@ -107,9 +112,9 @@ resource "aws_security_group_rule" "outgoing_https" {
   type              = "egress"
 }
 
-######################
-# Generate Passwords #
-######################
+###############################################################################
+#                              Generate Passwords                             #
+###############################################################################
 
 resource "random_string" "db_password" {
   length = 32
@@ -125,4 +130,16 @@ resource "random_string" "django_secret_key" {
   keepers {
     instance_id = "${aws_instance.server.id}"
   }
+}
+
+###############################################################################
+#                        Map Web Server to Domain Name                        #
+###############################################################################
+
+resource "aws_route53_record" "webserver" {
+  name    = "${local.subdomain}"
+  records = ["${aws_instance.server.public_ip}"]
+  ttl     = "60"
+  type    = "A"
+  zone_id = "${data.aws_route53_zone.main.id}"
 }

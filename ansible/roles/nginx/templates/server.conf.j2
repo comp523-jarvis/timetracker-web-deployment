@@ -1,6 +1,6 @@
 server {
     listen 80;
-    server_name {{ inventory_hostname }};
+    server_name {{ nginx_server_name }};
 
     location /media/ {
         alias {{ django_media_root }}/;

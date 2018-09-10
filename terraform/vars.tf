@@ -19,8 +19,13 @@ variable "ami_publisher" {
   description = "The account number of the AMI publisher."
 }
 
+variable "domain_name" {
+  default     = "ultimanager.com"
+  description = "Root domain name corresponding to Route 53 hosted zone."
+}
+
 variable "public_key" {
-  default = "~/.ssh/id_rsa.pub"
+  default     = "~/.ssh/id_rsa.pub"
   description = "The path to the local file containing the public key for deployment."
 }
 

@@ -13,6 +13,12 @@ django_env:
   DJANGO_ALLOWED_HOSTS: "{{ domain_name }}"
   DJANGO_SECRET_KEY: "{{ django_secret_key }}"
 
+  DJANGO_DB_HOST: localhost
+  DJANGO_DB_NAME: "{{ postgres_db_name }}"
+  DJANGO_DB_PASSWORD: "{{ db_password }}"
+  DJANGO_DB_PORT: "5432"
+  DJANGO_DB_USER: "{{ postgres_db_user }}"
+
 gunicorn_venv: "{{ python_app_venv }}"
 gunicorn_working_dir: "{{ django_app_root }}"
 gunicorn_wsgi_app: "{{ python_app_package }}.wsgi:application"

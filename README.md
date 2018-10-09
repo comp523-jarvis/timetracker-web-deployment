@@ -1,2 +1,2 @@
-# ultimanager-api-deployment
-Deployment configuration for the ultimanager-api project.
+# timetracker-web-deployment
+Deployment configuration for the timetracker-web project.

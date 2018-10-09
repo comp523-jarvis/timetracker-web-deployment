@@ -57,7 +57,7 @@ shift
 
 # Initialize Terraform
 echo "Initializing Terraform..."
-(cd ${TF_DIR}; terraform init >/dev/null)
+(cd ${TF_DIR}; terraform init)
 echo "Done."
 echo
 

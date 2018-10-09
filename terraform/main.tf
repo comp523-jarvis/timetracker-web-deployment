@@ -1,10 +1,10 @@
 terraform {
   backend "s3" {
-    bucket               = "ultimanager-terraform-state"
+    bucket               = "ulimi-terraform-state"
     dynamodb_table       = "terraform-lock"
-    key                  = "ultimanager-api"
+    key                  = "timetracker-web"
     region               = "us-east-1"
-    workspace_key_prefix = "ultimanager-api"
+    workspace_key_prefix = "timetracker-web"
   }
 }
 
@@ -14,7 +14,7 @@ provider "aws" {
 
 locals {
   env_name  = "${terraform.workspace}"
-  subdomain = "${terraform.workspace == "production" ? "api" : "${terraform.workspace}.api"}"
+  subdomain = "${terraform.workspace == "production" ? "" : "${terraform.workspace}"}"
 }
 
 data "aws_ami" "server" {
@@ -126,6 +126,7 @@ resource "random_string" "db_password" {
 
 resource "random_string" "django_secret_key" {
   length = 50
+  special = false
 
   keepers {
     instance_id = "${aws_instance.server.id}"

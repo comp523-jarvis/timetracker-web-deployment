@@ -1,5 +1,5 @@
 variable "application_name" {
-  default     = "ultimanager-api"
+  default     = "ulimi-timetracker"
   description = "The name of the application."
 }
 
@@ -20,7 +20,7 @@ variable "ami_publisher" {
 }
 
 variable "domain_name" {
-  default     = "ultimanager.com"
+  default     = "ulimi.cdriehuys.com"
   description = "Root domain name corresponding to Route 53 hosted zone."
 }
 

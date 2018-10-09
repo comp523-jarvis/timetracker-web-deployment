@@ -1,8 +1,8 @@
 ---
-python_app_repo: https://github.com/UltiManager/ultimanager-api
+python_app_repo: https://github.com/comp523-jarvis/timetracker-web
 
-python_app_name: ultimanager-api
-python_app_package: api
+python_app_name: ulimi-timetracker
+python_app_package: timetracker
 
 postgres_db_password: "{{ db_password }}"
 
@@ -24,7 +24,7 @@ gunicorn_working_dir: "{{ django_app_root }}"
 gunicorn_wsgi_app: "{{ python_app_package }}.wsgi:application"
 
 letsencrypt_domain: "{{ domain_name }}"
-letsencrypt_email: "admin@ultimanager.com"
+letsencrypt_email: "chathan@driehuys.com"
 
 nginx_proxy_socket: "{{ gunicorn_socket_uri }}"
 nginx_server_name: "{{ domain_name }}"

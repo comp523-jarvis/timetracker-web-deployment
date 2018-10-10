@@ -70,6 +70,7 @@ echo "Done."
 echo
 
 echo "Obtaining Terraform outputs..."
+ADMIN_PASSWORD=$(cd ${TF_DIR}; terraform output admin_password)
 DB_PASSWORD=$(cd ${TF_DIR}; terraform output db_password)
 SECRET_KEY=$(cd ${TF_DIR}; terraform output secret_key)
 SERVER_HOSTNAME=$(cd ${TF_DIR}; terraform output hostname)
@@ -77,6 +78,7 @@ echo "Done."
 echo
 
 echo "Deployment Parameters:"
+echo "    Admin Password: <sensitive>"
 echo "    Database Password: <sensitive>"
 echo "    Domain Name: ${SERVER_HOSTNAME}"
 echo "    Secret Key: <sensitive>"
@@ -109,6 +111,7 @@ echo
 
     ansible-playbook \
         --inventory ${inventory_file} \
+        --extra-vars "admin_password='${ADMIN_PASSWORD}'" \
         --extra-vars "db_password='${DB_PASSWORD}'" \
         --extra-vars "domain_name='${SERVER_HOSTNAME}'" \
         --extra-vars "django_secret_key='${SECRET_KEY}'" \

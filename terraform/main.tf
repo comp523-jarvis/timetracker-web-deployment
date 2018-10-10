@@ -116,6 +116,14 @@ resource "aws_security_group_rule" "outgoing_https" {
 #                              Generate Passwords                             #
 ###############################################################################
 
+resource "random_string" "admin_password" {
+  length = 32
+
+  keepers {
+    instance_id = "${aws_instance.server.id}"
+  }
+}
+
 resource "random_string" "db_password" {
   length = 32
 

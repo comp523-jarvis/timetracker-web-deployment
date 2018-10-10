@@ -9,6 +9,10 @@ postgres_db_password: "{{ db_password }}"
 django_venv: "{{ python_app_venv }}"
 django_app_root: "{{ python_app_project_root }}/{{ python_app_package }}"
 
+django_admin_env:
+  ADMIN_PASSWORD: "{{ admin_password }}"
+  ADMIN_USERNAME: admin
+
 django_env:
   DJANGO_ALLOWED_HOSTS: "{{ domain_name }}"
   DJANGO_SECRET_KEY: "{{ django_secret_key }}"

@@ -6,9 +6,8 @@ After=network.target
 [Service]
 PIDFile=/run/gunicorn/pid
 User=root
-{% set env_dict = django_base_env | combine(django_env) %}
-{% for key in env_dict %}Environment="{{ key }}={{ env_dict[key] }}"
-{% endfor %}
+{% if gunicorn_env_file is defined %}EnvironmentFile=-{{ gunicorn_env_file }}
+{% endif %}
 RuntimeDirectory=gunicorn
 WorkingDirectory={{ gunicorn_working_dir }}
 ExecStart={{ gunicorn_venv }}/bin/gunicorn --pid /run/gunicorn/pid   \

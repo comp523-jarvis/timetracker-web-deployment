@@ -23,6 +23,10 @@ django_env:
   DJANGO_DB_PORT: "5432"
   DJANGO_DB_USER: "{{ postgres_db_user }}"
 
+app_config_directory: /etc/ulimi-timetracker
+app_config_env_vars: "{{ django_base_env | combine(django_env) }}"
+
+gunicorn_env_file: "{{ app_config_env_file }}"
 gunicorn_venv: "{{ python_app_venv }}"
 gunicorn_working_dir: "{{ django_app_root }}"
 gunicorn_wsgi_app: "{{ python_app_package }}.wsgi:application"

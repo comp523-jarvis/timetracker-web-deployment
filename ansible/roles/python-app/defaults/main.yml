@@ -7,5 +7,7 @@ python_app_python_version: python3
 python_app_pip_package: python3-pip
 python_app_pip_command: pip3
 
+python_app_setuptools_package: python3-setuptools
+
 python_app_name: app
 python_app_project_root: /opt/{{ python_app_name }}

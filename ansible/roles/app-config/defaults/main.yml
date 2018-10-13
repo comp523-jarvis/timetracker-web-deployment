@@ -1,0 +1,4 @@
+---
+app_config_directory: /etc/myapp
+app_config_env_file: "{{ app_config_directory }}/environment"
+app_config_env_vars: {}

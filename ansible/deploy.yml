@@ -15,6 +15,7 @@
         update_cache: true
 
   roles:
+    - app-config
     - postgres
     - python-app
     - django

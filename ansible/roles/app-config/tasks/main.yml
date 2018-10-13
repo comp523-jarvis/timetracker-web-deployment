@@ -1,0 +1,15 @@
+---
+- name: Create app configuration directory
+  become: true
+  file:
+    path: "{{ app_config_directory }}"
+    state: directory
+
+- name: Upload environment file
+  become: true
+  template:
+    dest: "{{ app_config_env_file }}"
+    mode: 0600
+    owner: root
+    src: environment.j2
+  notify: reload gunicorn

@@ -9,22 +9,20 @@
   apt:
     name: "{{ python_app_python_version }}"
 
-- name: Install pip
+- name: Install python packaging tools
   become: true
   apt:
-    name: "{{ python_app_pip_package }}"
-
-- name: Install working version of pip
-  become: true
-  pip:
-    executable: "{{ python_app_pip_command }}"
-    name: pip==18.0
+    name:
+      - "{{ python_app_setuptools_package }}"
+      - python-setuptools
+      - "{{ python_app_pip_package }}"
 
 - name: Install pipenv
   become: true
   pip:
     executable: "{{ python_app_pip_command }}"
     name: pipenv
+    state: latest
 
 - name: Create directory to hold project
   become: true
@@ -37,17 +35,11 @@
   git:
     depth: 1
     dest: "{{ python_app_project_root }}"
-    # This is required because our pip installation below modifies the Pipfile
     force: true
     repo: "{{ python_app_repo }}"
     update: true
     version: "{{ python_app_repo_version }}"
-
-- name: Install working version of pip inside pipenv
-  become: true
-  command: pipenv install pip==18.0
-  args:
-    chdir: "{{ python_app_project_root }}"
+  notify: reload gunicorn
 
 - name: Install dependencies
   command: pipenv install --deploy

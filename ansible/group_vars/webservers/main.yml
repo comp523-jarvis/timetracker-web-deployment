@@ -23,6 +23,9 @@ django_env:
   DJANGO_DB_PORT: "5432"
   DJANGO_DB_USER: "{{ postgres_db_user }}"
 
+  DJANGO_DIALOGFLOW_INTENT_CLOCK_IN: 'projects/alpha-44257/agent/intents/8c12b7c5-87d7-4b4f-a66e-e8bfbd115405'
+  DJANGO_DIALOGFLOW_INTENT_CLOCK_OUT: 'projects/alpha-44257/agent/intents/8c82a2e0-a7ad-42a1-aac0-fc5557640e20'
+
 app_config_directory: /etc/ulimi-timetracker
 app_config_env_vars: "{{ django_base_env | combine(django_env) }}"
 

@@ -17,6 +17,9 @@ django_env:
   DJANGO_ALLOWED_HOSTS: "{{ domain_name }}"
   DJANGO_SECRET_KEY: "{{ django_secret_key }}"
 
+  DJANGO_DEFAULT_FROM_EMAIL: chathan@driehuys.com
+  DJANGO_SES_ENABLED: true
+
   DJANGO_DB_HOST: localhost
   DJANGO_DB_NAME: "{{ postgres_db_name }}"
   DJANGO_DB_PASSWORD: "{{ db_password }}"

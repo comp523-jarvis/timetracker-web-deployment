@@ -16,7 +16,6 @@
 
   roles:
     - app-config
-    - postgres
     - python-app
     - django
     - gunicorn

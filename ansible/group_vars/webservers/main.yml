@@ -4,8 +4,6 @@ python_app_repo: https://github.com/comp523-jarvis/timetracker-web
 python_app_name: ulimi-timetracker
 python_app_package: timetracker
 
-postgres_db_password: "{{ db_password }}"
-
 django_venv: "{{ python_app_venv }}"
 django_app_root: "{{ python_app_project_root }}/{{ python_app_package }}"
 
@@ -20,11 +18,11 @@ django_env:
   DJANGO_DEFAULT_FROM_EMAIL: chathan@driehuys.com
   DJANGO_SES_ENABLED: true
 
-  DJANGO_DB_HOST: localhost
-  DJANGO_DB_NAME: "{{ postgres_db_name }}"
+  DJANGO_DB_HOST: "{{ db_host }}"
+  DJANGO_DB_NAME: "{{ db_name }}"
   DJANGO_DB_PASSWORD: "{{ db_password }}"
-  DJANGO_DB_PORT: "5432"
-  DJANGO_DB_USER: "{{ postgres_db_user }}"
+  DJANGO_DB_PORT: "{{ db_port }}"
+  DJANGO_DB_USER: "{{ db_user }}"
 
   DJANGO_DIALOGFLOW_INTENT_CLOCK_IN: 'projects/alpha-44257/agent/intents/8c12b7c5-87d7-4b4f-a66e-e8bfbd115405'
   DJANGO_DIALOGFLOW_INTENT_CLOCK_OUT: 'projects/alpha-44257/agent/intents/8c82a2e0-a7ad-42a1-aac0-fc5557640e20'

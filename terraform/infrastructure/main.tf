@@ -2,19 +2,28 @@ terraform {
   backend "s3" {
     bucket               = "ulimi-terraform-state"
     dynamodb_table       = "terraform-lock"
-    key                  = "timetracker-web"
+    key                  = "timetracker.tfstate"
     region               = "us-east-1"
-    workspace_key_prefix = "timetracker-web"
+    workspace_key_prefix = "timetracker/infrastructure"
   }
 }
 
 provider "aws" {
   region = "${var.aws_region}"
+  version = "~> 1.39"
+}
+
+provider "random" {
+  version = "~> 2.0"
 }
 
 locals {
   env_name  = "${terraform.workspace}"
   subdomain = "${terraform.workspace == "production" ? "" : "${terraform.workspace}"}"
+}
+
+module "db" {
+  source = "./rds"
 }
 
 data "aws_ami" "server" {
@@ -55,11 +64,6 @@ resource "aws_instance" "server" {
   key_name        = "${aws_key_pair.deploy.key_name}"
   security_groups = ["${aws_security_group.server.name}"]
 
-  root_block_device {
-    delete_on_termination = "false"
-    volume_size           = "${var.server_storage_amount}"
-  }
-
   tags {
     Application = "${var.application_name}"
     Environment = "${local.env_name}"
@@ -77,6 +81,24 @@ resource "aws_security_group" "server" {
     Application = "${var.application_name}"
     Environment = "${local.env_name}"
   }
+}
+
+resource "aws_security_group_rule" "db_from_web" {
+  from_port = "${module.db.db_port}"
+  protocol = "tcp"
+  security_group_id = "${module.db.sg_id}"
+  source_security_group_id = "${aws_security_group.server.id}"
+  to_port = "${module.db.db_port}"
+  type = "ingress"
+}
+
+resource "aws_security_group_rule" "web_to_db" {
+  from_port = "${module.db.db_port}"
+  protocol = "tcp"
+  security_group_id = "${aws_security_group.server.id}"
+  source_security_group_id = "${module.db.sg_id}"
+  to_port = "${module.db.db_port}"
+  type = "egress"
 }
 
 resource "aws_security_group_rule" "ssh" {
@@ -129,14 +151,6 @@ resource "aws_security_group_rule" "outgoing_https" {
 ###############################################################################
 
 resource "random_string" "admin_password" {
-  length = 32
-
-  keepers {
-    instance_id = "${aws_instance.server.id}"
-  }
-}
-
-resource "random_string" "db_password" {
   length = 32
 
   keepers {

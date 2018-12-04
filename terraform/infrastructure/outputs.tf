@@ -3,9 +3,21 @@ output "admin_password" {
     value     = "${random_string.admin_password.result}"
 }
 
-output "db_password" {
+output "db_address" {
+  value = "${module.db.db_address}"
+}
+
+output "db_admin_password" {
   sensitive = true
-  value     = "${random_string.db_password.result}"
+  value     = "${module.db.admin_password}"
+}
+
+output "db_admin_user" {
+  value = "${module.db.admin_username}"
+}
+
+output "db_port" {
+  value = "${module.db.db_port}"
 }
 
 output "hostname" {

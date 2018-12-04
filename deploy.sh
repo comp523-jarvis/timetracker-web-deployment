@@ -5,11 +5,11 @@ set -o pipefail
 
 usage() {
     echo
-    echo "Usage: deploy.sh <terraform-dir> <terraform-workspace> <ansible-dir>"
+    echo "Usage: deploy.sh <deploy-dir> <terraform-workspace>"
     echo
-    echo "terraform-dir       - The path to the directory containing the project's Terraform configuration."
+    echo "deploy-dir          - The path to the directory containing the project's"
+    ehco "                      deployment configuration."
     echo "terraform-workspace - The name of the Terraform workspace to use."
-    echo "ansible-dir         - The path to the directory containing the project's Ansible configuration."
     echo
 }
 
@@ -19,13 +19,13 @@ usage() {
 
 if [ -z ${1+x} ]
 then
-    echo "No Terraform directory specified."
+    echo "No deployment directory specified."
     usage
 
     exit 1
 fi
 
-TF_DIR=$1
+DEPLOY_DIR=$1
 shift
 
 if [ -z ${1+x} ]
@@ -40,48 +40,44 @@ fi
 export TF_WORKSPACE=$1
 shift
 
-if [ -z ${1+x} ]
-then
-    echo "No Ansible directory specified."
-    usage
+############################
+# Provision Infrastructure #
+############################
 
-    exit 1
-fi
+INFRA_DIR=${DEPLOY_DIR}/terraform/infrastructure
+echo "Deploying infrastructure..."
+(cd ${INFRA_DIR}; terraform init)
+(cd ${INFRA_DIR}; terraform apply -auto-approve)
 
-ANSIBLE_DIR=$1
-shift
+# Obtain outputs
+INFRA_OUTPUTS=$(cd ${INFRA_DIR}; terraform output -json)
 
-##################################
-# Pull Parameters from Terraform #
-##################################
+ADMIN_PASSWORD=$(echo ${INFRA_OUTPUTS} | jq --raw-output .admin_password.value)
+DB_ADDRESS=$(echo ${INFRA_OUTPUTS} | jq --raw-output .db_address.value)
+DB_PORT=$(echo ${INFRA_OUTPUTS} | jq --raw-output .db_port.value)
+WEB_HOSTNAME=$(echo ${INFRA_OUTPUTS} | jq --raw-output .hostname.value)
+SECRET_KEY=$(echo ${INFRA_OUTPUTS} | jq --raw-output .secret_key.value)
 
-# Initialize Terraform
-echo "Initializing Terraform..."
-(cd ${TF_DIR}; terraform init)
-echo "Done."
+echo "Finished provisioning infrastructure."
 echo
 
-# Build infrastructure
-echo "Provisioning Infrastructure..."
-echo
-(cd ${TF_DIR}; terraform apply -auto-approve)
-echo
-echo "Done."
-echo
+###############################
+# Provision Postgres Database #
+###############################
 
-echo "Obtaining Terraform outputs..."
-ADMIN_PASSWORD=$(cd ${TF_DIR}; terraform output admin_password)
-DB_PASSWORD=$(cd ${TF_DIR}; terraform output db_password)
-SECRET_KEY=$(cd ${TF_DIR}; terraform output secret_key)
-SERVER_HOSTNAME=$(cd ${TF_DIR}; terraform output hostname)
-echo "Done."
-echo
+DB_DIR=${DEPLOY_DIR}/terraform/database
+echo "Provisioning Postgres database..."
+(cd ${DB_DIR}; terraform init)
+(cd ${DB_DIR}; terraform apply -auto-approve)
 
-echo "Deployment Parameters:"
-echo "    Admin Password: <sensitive>"
-echo "    Database Password: <sensitive>"
-echo "    Domain Name: ${SERVER_HOSTNAME}"
-echo "    Secret Key: <sensitive>"
+# Obtain outputs
+DB_OUTPUTS=$(cd ${DB_DIR}; terraform output -json)
+
+DB_NAME=$(echo ${DB_OUTPUTS} | jq --raw-output .db_name.value)
+DB_PASSWORD=$(echo ${DB_OUTPUTS} | jq --raw-output .db_password.value)
+DB_USER=$(echo ${DB_OUTPUTS} | jq --raw-output .db_user.value)
+
+echo "Finished provisioning database."
 echo
 
 ##############################
@@ -94,7 +90,7 @@ inventory_file="${tmpdir}/inventory"
 
 cat > ${inventory_file} <<EOF
 [webservers]
-${SERVER_HOSTNAME}
+${WEB_HOSTNAME}
 EOF
 
 echo "Generated inventory file:"
@@ -107,13 +103,17 @@ echo
 #####################################
 
 (
-    cd ${ANSIBLE_DIR}
+    cd ${DEPLOY_DIR}/ansible
 
     ansible-playbook \
         --inventory ${inventory_file} \
         --extra-vars "admin_password='${ADMIN_PASSWORD}'" \
+        --extra-vars "db_host='${DB_ADDRESS}'" \
+        --extra-vars "db_name='${DB_NAME}'" \
         --extra-vars "db_password='${DB_PASSWORD}'" \
-        --extra-vars "domain_name='${SERVER_HOSTNAME}'" \
+        --extra-vars "db_port='${DB_PORT}'" \
+        --extra-vars "db_user='${DB_USER}'" \
+        --extra-vars "domain_name='${WEB_HOSTNAME}'" \
         --extra-vars "django_secret_key='${SECRET_KEY}'" \
         deploy.yml
 )

@@ -117,3 +117,5 @@ echo
         --extra-vars "django_secret_key='${SECRET_KEY}'" \
         deploy.yml
 )
+
+rm -r ${tmpdir}

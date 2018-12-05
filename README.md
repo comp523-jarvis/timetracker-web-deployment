@@ -61,7 +61,7 @@ The deployment process is split into two parts: provisioning infrastructure with
   * Webserver
     * Pull app code, set up Gunicorn and NGINX
     
-For more information, see the README files in the [`ansible`](ansible/README.md) and [`terraform`](terraform/README.md) directories.
+For more information, see the README files in the [`ansible`](ansible) and [`terraform`](terraform) directories.
 
 ## License
 

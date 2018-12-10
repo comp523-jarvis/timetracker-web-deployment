@@ -154,7 +154,7 @@ resource "random_string" "admin_password" {
   length = 32
 
   keepers {
-    instance_id = "${aws_instance.server.id}"
+    db_address = "${module.db.db_address}"
   }
 }
 

@@ -20,7 +20,7 @@ variable "ami_publisher" {
 }
 
 variable "domain_name" {
-  default     = "ulimi.cdriehuys.com"
+  default     = "ulimiapps.com"
   description = "Root domain name corresponding to Route 53 hosted zone."
 }
 
